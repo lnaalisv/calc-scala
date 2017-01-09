@@ -20,16 +20,16 @@ class TokenizerSpec extends FlatSpec with Matchers {
         var correctTokens : List[Token] = List(Number(1), Operator('+'), Number(1), Operator('+'), Number(2))
         tokens should be (correctTokens)
 
-        tokens = "1 - 1 - 2".tokenize
-        correctTokens = List(Number(1), Operator('-'), Number(1), Operator('-'), Number(2))
+        tokens = "12 - 1 - 2".tokenize
+        correctTokens = List(Number(12), Operator('-'), Number(1), Operator('-'), Number(2))
         tokens should be (correctTokens)
 
-        tokens = "1 * 1 * 2".tokenize
-        correctTokens = List(Number(1), Operator('*'), Number(1), Operator('*'), Number(2))
+        tokens = "1 * 11 * 2".tokenize
+        correctTokens = List(Number(1), Operator('*'), Number(11), Operator('*'), Number(2))
         tokens should be (correctTokens)
 
-        tokens = "1 / 1 / 2".tokenize
-        correctTokens = List(Number(1), Operator('/'), Number(1), Operator('/'), Number(2))
+        tokens = "1 / 1 / 200".tokenize
+        correctTokens = List(Number(1), Operator('/'), Number(1), Operator('/'), Number(200))
         tokens should be (correctTokens)
     }
 

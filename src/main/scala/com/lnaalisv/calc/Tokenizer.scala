@@ -18,9 +18,9 @@ object Tokenizer {
     def stackedIsNumber(str : String) : Boolean = {
         try {
             val numeric = str.toFloat
-            return true
+            true
         } catch {
-            case _ => return false
+            case _ : Throwable => false
         }
     }
     def toParenthesisOrOperator(c : Char) : Token = {
@@ -33,35 +33,66 @@ object Tokenizer {
         case Number(number) => number.toString
     }
 
+    @throws(classOf[Exception])
+    def imperativeTokenize(str : String) : List[Token] = {
+
+        var tokens : List[Token] = List()
+        var stack : String = ""
+        for (c <- str.filter(isNotWhiteSpace)) {
+            if (isParenthesis(c) || isOperator(c)) {
+                if (!stack.isEmpty) {
+                    tokens = tokens :+ Number(stack.toFloat)
+                    stack = ""
+                }
+                tokens = tokens :+ toParenthesisOrOperator(c)
+            } else if (stackedIsNumber(stack + c)) {
+                stack += c
+            } else {
+                throw new Exception("Could not parse: " + c)
+            }
+        }
+
+        if (!stack.isEmpty) {
+            tokens = tokens :+ Number(stack.toFloat)
+        }
+
+        tokens
+    }
+
+    @throws(classOf[Exception])
+    def recursiveTokenize(str : String, stack : String = "") : List[Token] = {
+        if (str.isEmpty) return List()
+        val firstChar = str.head
+        val rest = str.tail
+        if (isParenthesis(firstChar) || isOperator(firstChar)) {
+            if (stack.isEmpty) {
+                return toParenthesisOrOperator(firstChar) :: recursiveTokenize(rest)
+            } else {
+                return List(Number(stack.toFloat), toParenthesisOrOperator(firstChar)) ::: recursiveTokenize(rest)
+            }
+        } else if(stackedIsNumber(stack + firstChar)) {
+            if (rest.isEmpty) {
+                return List(Number((stack + firstChar).toFloat))
+            } else {
+                return recursiveTokenize(rest, stack + firstChar)
+            }
+        }
+        throw new Exception("Parse error at " + firstChar)
+    }
+
     implicit class StringTokenizer(str : String) {
 
         @throws(classOf[Exception])
         def tokenize : List[Token] = {
-            println("Tokenizing " + str)
-
-            var tokens : List[Token] = List()
-            var stack : String = ""
-            for (c <- str.filter(isNotWhiteSpace)) {
-                if (isParenthesis(c) || isOperator(c)) {
-                    if (!stack.isEmpty) {
-                        tokens = tokens :+ Number(stack.toFloat)
-                        stack = ""
-                    }
-                    tokens = tokens :+ toParenthesisOrOperator(c)
-                } else if (stackedIsNumber(stack + c)) {
-                    stack += c
-                } else {
-                    throw new Exception("Could not parse: " + c)
-                }
+            try {
+                println("Tokenizing " + str)
+                val result = recursiveTokenize(str.filter(isNotWhiteSpace))
+                println("Tokenizing result " + result.map(tokenToString))
+                result
+            } catch {
+                case ex : Throwable => throw ex
             }
-
-            if (!stack.isEmpty) {
-                tokens = tokens :+ Number(stack.toFloat)
-            }
-
-            println("Tokenizing result: " + tokens.map(tokenToString))
-
-            tokens
         }
+
     }
 }
