@@ -1,5 +1,7 @@
 package com.lnaalisv.calc
 
+import Tokenizer._
+
 trait Expression
 case class Value(value : Float) extends Expression
 case class Calculation(left : Expression, operator : Operator, right : Expression) extends Expression
@@ -8,7 +10,15 @@ case class NegateParenthesisExpression(expression : Expression) extends Expressi
 case object EmptyExpression extends Expression
 
 object Expression {
-
+    def expressionToString(expression : Expression) : String = {
+        expression match {
+            case Value(value) => value.toString
+            case ParenthesisExpression(inner) => "(" + expressionToString(inner) + ")"
+            case NegateParenthesisExpression(inner) => "-(" + expressionToString(inner) + ")"
+            case Calculation(l, o, r) => expressionToString(l) + " " + tokenToString(o) + " " + expressionToString(r)
+            case EmptyExpression => "_EMPTY_"
+        }
+    }
 }
 
 object Value {

@@ -76,7 +76,7 @@ class CalculatorSpec extends FlatSpec with Matchers {
         calculateExpression(calculation) should be (2)
     }
 
-    "calculate" should "calculate simple +,- expressions" in {
+    "calculate" should "calculate simple + expressions" in {
         var result = calculate("1 + 1")
         result should be (2)
 
@@ -85,12 +85,55 @@ class CalculatorSpec extends FlatSpec with Matchers {
 
         result = calculate("1 + 2 + 3+ 4")
         result should be (10)
+    }
 
-        result = calculate("3 - 1")
+    it should "calculate simple - expressions" in {
+        var result = calculate("3 - 1")
         result should be (2)
 
         result = calculate("1 - 10 - 2")
         result should be (-11)
+    }
+
+    it should "calculate simple * expressions" in {
+        var result = calculate("8*8")
+        result should be (64)
+
+        result = calculate("2*2*2*2*2")
+        result should be (32)
+
+        result = calculate("1+ 2*2*2*2*2")
+        result should be (33)
+
+        result = calculate("1+ 2*2*2*2*2 + 1")
+        result should be (34)
+    }
+
+    it should "calculate simple / expressions" in {
+        var result = calculate("8/2")
+        result should be (4)
+
+        result = calculate("1+8/2")
+        result should be (5)
+    }
+
+    it should "calculate parenthesis expressions" in {
+        var result = calculate("(1 + 1 )")
+        result should be (2)
+
+        result = calculate("1 * ( 1 + 1 )")
+        result should be (2)
+    }
+
+    it should "calculate negation expressions" in {
+        var result = calculate("-(1 + 1 )")
+        result should be (-2)
+
+        result = calculate("-1 * ( 1 + 1 )")
+        result should be (-2)
+
+        result = calculate("1 * -( 1 + 1 )")
+        result should be (-2)
     }
 
 }

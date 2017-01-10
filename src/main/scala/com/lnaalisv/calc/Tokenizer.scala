@@ -96,9 +96,9 @@ object Tokenizer {
         @throws(classOf[Exception])
         def tokenize : List[Token] = {
             try {
-                println("Tokenizing " + str)
+                //println("Tokenizing " + str)
                 val result = recursiveTokenize(str.filter(isNotWhiteSpace))
-                println("Tokenizing result " + result.map(tokenToString))
+                //println("Tokenizing result " + result.map(tokenToString))
                 result
             } catch {
                 case ex : Throwable => throw ex
