@@ -11,9 +11,20 @@ object Tokenizer {
     val parenthesis = "()"
     val operators = "+-*/"
 
+    val Plus = Operator('+')
+    val Minus = Operator('-')
+    val Multiply = Operator('*')
+    val Divide = Operator('/')
+    val LeftParenthesis = Parenthesis('(')
+    val RightParenthesis = Parenthesis(')')
+
     type isTokenCharacter = (Char) => Boolean
-    def isParenthesis : isTokenCharacter = parenthesis.indexOf(_) != -1
-    def isOperator : isTokenCharacter = operators.indexOf(_) != -1
+    def isParenthesisChar : isTokenCharacter = parenthesis.indexOf(_) != -1
+    def isOperatorChar : isTokenCharacter = operators.indexOf(_) != -1
+    def isOperator(t : Token) : Boolean = t match {
+        case Operator(_) => true
+        case _ => false
+    }
     def isNotWhiteSpace : isTokenCharacter = _ != ' '
     def stackedIsNumber(str : String) : Boolean = {
         try {
@@ -24,7 +35,7 @@ object Tokenizer {
         }
     }
     def toParenthesisOrOperator(c : Char) : Token = {
-        if (isParenthesis(c)) Parenthesis(c) else Operator(c)
+        if (isParenthesisChar(c)) Parenthesis(c) else Operator(c)
     }
 
     def tokenToString(t : Token) : String = t match {
@@ -39,7 +50,7 @@ object Tokenizer {
         var tokens : List[Token] = List()
         var stack : String = ""
         for (c <- str.filter(isNotWhiteSpace)) {
-            if (isParenthesis(c) || isOperator(c)) {
+            if (isParenthesisChar(c) || isOperatorChar(c)) {
                 if (!stack.isEmpty) {
                     tokens = tokens :+ Number(stack.toFloat)
                     stack = ""
@@ -64,7 +75,7 @@ object Tokenizer {
         if (str.isEmpty) return List()
         val firstChar = str.head
         val rest = str.tail
-        if (isParenthesis(firstChar) || isOperator(firstChar)) {
+        if (isParenthesisChar(firstChar) || isOperatorChar(firstChar)) {
             if (stack.isEmpty) {
                 return toParenthesisOrOperator(firstChar) :: recursiveTokenize(rest)
             } else {
