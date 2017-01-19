@@ -1,6 +1,6 @@
 package com.lnaalisv.calc
 
-trait Token
+sealed trait Token
 
 case class Parenthesis(paren : Char) extends Token
 case class Operator(operator : Char) extends Token
